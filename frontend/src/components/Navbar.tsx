@@ -38,6 +38,9 @@ export function Navbar() {
           <a href="/#features" onClick={() => setOpen(false)}>
             {t("home.features")}
           </a>
+          <Link to="/organizer" onClick={() => setOpen(false)}>
+            {t("nav.organizer")}
+          </Link>
           <LanguageSwitcher />
           {session ? (
             <>

@@ -39,6 +39,8 @@ class ProfileInput(BaseModel):
     phone: str | None = Field(default=None, max_length=40)
     age: int | None = Field(default=None, ge=0, le=120)
     city: str | None = Field(default=None, max_length=120)
+    exclude_ids: list[str] = Field(default_factory=list, max_length=100)
+    preferred_slots: list[str] = Field(default_factory=list, max_length=20)
 
 
 class MatchPerson(BaseModel):
@@ -49,6 +51,18 @@ class MatchPerson(BaseModel):
     goal: str
     reason: str
     icebreaker: str
+    available_slots: list[str] = Field(default_factory=list)
+    suggested_slot: str = ""
+
+
+class PartnerBooth(BaseModel):
+    id: str
+    name: str
+    category: str
+    location: str
+    tags: list[str]
+    reason: str
+    match_score: int
 
 
 class MatchResponse(BaseModel):
@@ -56,6 +70,7 @@ class MatchResponse(BaseModel):
     processing_ms: int
     total_candidates: int
     fallback_used: bool
+    recommended_booths: list[PartnerBooth] = Field(default_factory=list)
 
 
 class ProfileResponse(BaseModel):
@@ -71,3 +86,37 @@ class FeedbackInput(BaseModel):
 class TelegramCodeInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
     code: str = Field(min_length=9, max_length=9)
+
+
+class OrganizerStatItem(BaseModel):
+    name: str
+    count: int
+    share: float
+
+
+class OrganizerGoalItem(BaseModel):
+    goal: str
+    count: int
+    share: float
+
+
+class OrganizerBoothStat(BaseModel):
+    id: str
+    name: str
+    category: str
+    location: str
+    tags: list[str]
+    matching_participants: int
+
+
+class OrganizerStatsResponse(BaseModel):
+    total_participants: int
+    total_feedback: int
+    met_count: int
+    not_fit_count: int
+    goals: list[OrganizerGoalItem]
+    top_skills: list[OrganizerStatItem]
+    top_interests: list[OrganizerStatItem]
+    top_roles: list[OrganizerStatItem]
+    experience_buckets: list[OrganizerStatItem]
+    booths: list[OrganizerBoothStat]

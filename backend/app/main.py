@@ -10,7 +10,7 @@ from app.database import Base, SessionLocal, engine
 from app.matching import MatchingIndex
 from app.models import Profile
 from app.errors import install_error_handlers
-from app.routes import feedback, health, match, profile, telegram
+from app.routes import feedback, health, match, organizer, profile, telegram
 
 
 @asynccontextmanager
@@ -42,3 +42,4 @@ app.include_router(match.router)
 app.include_router(profile.router)
 app.include_router(feedback.router)
 app.include_router(telegram.router)
+app.include_router(organizer.router)

@@ -208,7 +208,13 @@ npm run build
 
 ## 🐳 Запуск в Docker
 
-Для изоляции бэкенда можно использовать готовый `backend/Dockerfile`:
+Для быстрого запуска всего проекта (и бэкенда на `http://localhost:8000`, и фронтенда на `http://localhost:5173`) одной командой используйте `docker-compose.yml`:
+
+```bash
+docker compose up --build
+```
+
+Для изолированного запуска только бэкенда можно использовать `backend/Dockerfile`:
 
 ```bash
 cd backend

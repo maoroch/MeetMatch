@@ -6,8 +6,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.matching import MatchingIndex
-from app.models import Profile
+from app.matching import MatchingIndex, recommend_booths
+from app.models import Feedback, Profile
 from app.schemas import MatchResponse, ProfileInput
 from app.security import Actor, get_optional_user, identify_actor
 
@@ -30,11 +30,13 @@ def match_profiles(
     started = time.perf_counter()
     if payload is not None:
         seeker = payload.model_dump()
-        seeker["id"] = optional_actor.user_id if optional_actor else "anonymous-query"
+        actor_id = optional_actor.user_id if optional_actor else "anonymous-query"
+        seeker["id"] = actor_id
     else:
         actor = identify_actor(optional_actor, x_bot_key, x_telegram_user_id)
         if actor is None:
             raise HTTPException(status_code=422, detail="A profile body is required")
+        actor_id = actor.user_id
         if actor.is_bot and x_telegram_user_id:
             profile = db.scalar(select(Profile).where(Profile.telegram_user_id == x_telegram_user_id))
         else:
@@ -42,7 +44,19 @@ def match_profiles(
         if profile is None:
             raise HTTPException(status_code=404, detail="Profile not found")
         seeker = _profile_dict(profile)
+
+    feedback_rows = db.scalars(select(Feedback).where(Feedback.user_id == actor_id)).all()
+    excluded_ids = {row.match_id for row in feedback_rows if row.action in ("dislike", "not_fit")}
+    met_ids = {row.match_id for row in feedback_rows if row.action in ("like", "met")}
+
     index: MatchingIndex = request.app.state.matching_index
-    matches, total, fallback = index.match(seeker, limit=5)
+    matches, total, fallback = index.match(seeker, limit=5, excluded_ids=excluded_ids, met_ids=met_ids)
+    booths = recommend_booths(seeker, limit=3)
     elapsed = int((time.perf_counter() - started) * 1000)
-    return {"matches": matches, "processing_ms": elapsed, "total_candidates": total, "fallback_used": fallback}
+    return {
+        "matches": matches,
+        "processing_ms": elapsed,
+        "total_candidates": total,
+        "fallback_used": fallback,
+        "recommended_booths": booths,
+    }

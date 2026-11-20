@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { CalendarClock, MapPin, Sparkles } from "lucide-react";
 import { useMatches } from "../hooks/useMatches";
+import { CONFERENCE_SLOTS } from "../contexts/MatchesContext";
 import { useOnboardingDraft } from "../hooks/useOnboardingDraft";
 import { useI18n } from "../hooks/useI18n";
 import { validDraft } from "../lib/validation";
@@ -74,6 +76,31 @@ export default function Matches() {
         <EmptyState />
       ) : (
         <>
+          <div className="card slot-filter-bar">
+            <div className="slot-filter-title">
+              <CalendarClock size={18} className="text-accent" />
+              <div>
+                <strong>{t("matches.slots.filterTitle")}</strong>
+                <p className="hint">{t("matches.slots.filterHint")}</p>
+              </div>
+            </div>
+            <div className="slot-pills">
+              {CONFERENCE_SLOTS.map((slot) => {
+                const active = m.preferredSlots.includes(slot);
+                return (
+                  <button
+                    key={slot}
+                    type="button"
+                    className={`slot-pill ${active ? "mutual" : ""}`}
+                    aria-pressed={active}
+                    onClick={() => m.togglePreferredSlot(slot)}
+                  >
+                    {slot}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           {m.status === "partial" && (
             <p className="notice" role="status">
               {t("matches.partial", { count: m.matches.length })}
@@ -98,9 +125,45 @@ export default function Matches() {
                 index={i}
                 status={m.cards[match.id] ?? "idle"}
                 onFeedback={m.sendFeedback}
+                preferredSlots={m.preferredSlots}
+                scheduledSlot={m.scheduledSlots[match.id] ?? ""}
+                onScheduleSlot={m.scheduleSlot}
               />
             ))}
           </div>
+          {m.booths.length > 0 && (
+            <div className="booths-section">
+              <div className="section-heading">
+                <span className="eyebrow">
+                  <Sparkles size={14} /> {t("matches.booths.eyebrow")}
+                </span>
+                <h2>{t("matches.booths.title")}</h2>
+                <p className="muted">{t("matches.booths.subtitle")}</p>
+              </div>
+              <div className="three-grid">
+                {m.booths.map((booth) => (
+                  <article key={booth.id} className="card booth-card">
+                    <div className="booth-head">
+                      <span className="badge">{booth.category}</span>
+                      <span className="booth-score">{booth.match_score}%</span>
+                    </div>
+                    <h3>{booth.name}</h3>
+                    <p className="booth-location muted">
+                      <MapPin size={15} /> {booth.location}
+                    </p>
+                    <p className="booth-reason">{booth.reason}</p>
+                    <div className="tags">
+                      {booth.tags.map((tag) => (
+                        <span key={tag} className="badge">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
       {!["loading", "idle"].includes(m.status) && (
@@ -110,6 +173,9 @@ export default function Matches() {
           </Button>
           <Link className="btn btn-secondary" to="/onboarding">
             {t("matches.edit")}
+          </Link>
+          <Link className="btn btn-secondary" to="/organizer">
+            {t("nav.organizer")}
           </Link>
         </div>
       )}

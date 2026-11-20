@@ -10,6 +10,8 @@ import {
   type HealthResponse,
   type TelegramLinkResponse,
   type MatchResult,
+  type PartnerBooth,
+  type OrganizerStats,
   type Goal,
 } from "../types";
 import { mockApi } from "./mockApi";
@@ -54,11 +56,16 @@ export function validateMatches(data: unknown): MatchResult {
   if (data.matches.length && !matches.length)
     throw new ApiError(502, "errors.invalid");
   const ms = "processing_ms" in data ? data.processing_ms : undefined;
+  const booths =
+    "recommended_booths" in data && Array.isArray((data as { recommended_booths?: unknown }).recommended_booths)
+      ? ((data as { recommended_booths: PartnerBooth[] }).recommended_booths)
+      : undefined;
   return {
     matches: matches.slice(0, 5),
     ...(typeof ms === "number" && Number.isFinite(ms) && ms >= 0
       ? { processing_ms: ms }
       : {}),
+    ...(booths ? { recommended_booths: booths } : {}),
   };
 }
 
@@ -115,7 +122,7 @@ const realApi = {
   health: () => request<HealthResponse>("/api/health"),
   match: async (p: MatchRequest) => {
     const backendGoal = p.goal === "be_mentor" ? "offer_mentorship" : p.goal;
-    const body = {
+    const body: Record<string, unknown> = {
       name: "",
       role: p.role,
       goal: backendGoal,
@@ -124,6 +131,8 @@ const realApi = {
       experience_years: Math.round(Number(p.experience ?? 0)),
       bio: p.about ?? "",
     };
+    if (p.exclude_ids?.length) body.exclude_ids = p.exclude_ids;
+    if (p.preferred_slots?.length) body.preferred_slots = p.preferred_slots;
     return validateMatches(
       await request<unknown>("/api/match", {
         method: "POST",
@@ -142,6 +151,7 @@ const realApi = {
     if (r?.ok !== true) throw new ApiError(502, "errors.invalid");
     return r;
   },
+  organizerStats: () => request<OrganizerStats>("/api/organizer/stats"),
   getProfile: async (): Promise<ProfileMe> => {
     const res = await request<{ profile?: any } | ProfileMe>("/api/profile/me");
     if (!res) return {};

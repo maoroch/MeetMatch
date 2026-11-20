@@ -17,6 +17,8 @@ export interface MatchRequest {
   interests: string[];
   about: string;
   goal: Goal;
+  exclude_ids?: string[];
+  preferred_slots?: string[];
 }
 
 export interface Match {
@@ -27,11 +29,24 @@ export interface Match {
   goal: Goal; // цель участника-рекомендации
   reason: string; // 1–2 предложения
   icebreaker: string; // первая фраза
+  available_slots?: string[];
+  suggested_slot?: string;
+}
+
+export interface PartnerBooth {
+  id: string;
+  name: string;
+  category: string;
+  location: string;
+  tags: string[];
+  reason: string;
+  match_score: number;
 }
 
 export interface MatchResponse {
   matches: Match[]; // до 5 элементов
   processing_ms: number;
+  recommended_booths?: PartnerBooth[];
 }
 
 // UI transport tolerates missing timing; demo provenance never changes match scores.
@@ -40,8 +55,42 @@ export type MatchResult = Omit<MatchResponse, "processing_ms"> & {
   __demo?: boolean;
 };
 
+// ===== /api/organizer/stats =====
+export interface OrganizerStatItem {
+  name: string;
+  count: number;
+  share: number;
+}
+
+export interface OrganizerGoalItem {
+  goal: string;
+  count: number;
+  share: number;
+}
+
+export interface OrganizerBoothStat {
+  id: string;
+  name: string;
+  category: string;
+  location: string;
+  tags: string[];
+  matching_participants: number;
+}
+
+export interface OrganizerStats {
+  total_participants: number;
+  total_feedback: number;
+  met_count: number;
+  not_fit_count: number;
+  goals: OrganizerGoalItem[];
+  top_skills: OrganizerStatItem[];
+  top_interests: OrganizerStatItem[];
+  top_roles: OrganizerStatItem[];
+  experience_buckets: OrganizerStatItem[];
+  booths: OrganizerBoothStat[];
+}
+
 // ===== /api/feedback =====
-// [ПРЕДПОЛОЖЕНИЕ] Схема не зафиксирована в ТЗ. Сверить с Backend (Pydantic).
 export type FeedbackAction = "met" | "not_fit";
 
 export interface FeedbackRequest {
@@ -54,7 +103,6 @@ export interface FeedbackResponse {
 }
 
 // ===== /api/profile/me =====
-// [ПРЕДПОЛОЖЕНИЕ] Схема не зафиксирована в ТЗ. Сверить с Backend.
 export type Gender = "male" | "female" | "prefer_not_to_say";
 
 export interface PersonalProfile {
@@ -71,16 +119,14 @@ export interface ProfileMe {
   email?: string;
   personal?: PersonalProfile;
   professional?: ProfessionalProfile;
-  // Статистика — только если Backend её отдаёт; Frontend ничего не выдумывает.
   stats?: Record<string, number>;
 }
 
 // ===== /api/telegram/link =====
-// [ПРЕДПОЛОЖЕНИЕ] Одноразовый код привязки. Сверить с Backend.
 export interface TelegramLinkResponse {
   code: string;
-  deep_link?: string; // t.me/<bot>?start=<code> — только одноразовый код, без токенов
-  expires_in?: number; // секунды
+  deep_link?: string;
+  expires_in?: number;
 }
 
 // ===== /api/health =====
@@ -91,7 +137,7 @@ export interface HealthResponse {
 // ===== Ошибки =====
 export class ApiError extends Error {
   constructor(
-    public status: number, // 0 — сетевая ошибка/таймаут
+    public status: number,
     message: string,
     public detail?: unknown,
   ) {

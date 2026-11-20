@@ -5,6 +5,7 @@ import {
   type MatchRequest,
   type FeedbackRequest,
   type ProfileMe,
+  type OrganizerStats,
 } from "../types";
 export const demoMatches: Match[] = [
   {
@@ -74,6 +75,76 @@ export const mockApi = {
     await delay();
     feedback.set(req.match_id, req.action);
     return { ok: true };
+  },
+  async organizerStats(): Promise<OrganizerStats> {
+    await delay();
+    return {
+      total_participants: 180,
+      total_feedback: feedback.size,
+      met_count: Array.from(feedback.values()).filter((v) => v === "met").length,
+      not_fit_count: Array.from(feedback.values()).filter((v) => v === "not_fit").length,
+      goals: [
+        { goal: "find_job", count: 30, share: 16.7 },
+        { goal: "hire", count: 30, share: 16.7 },
+        { goal: "find_mentor", count: 30, share: 16.7 },
+        { goal: "be_mentor", count: 30, share: 16.7 },
+        { goal: "find_cofounder", count: 30, share: 16.7 },
+        { goal: "exchange_experience", count: 30, share: 16.5 },
+      ],
+      top_skills: [
+        { name: "Python", count: 68, share: 37.8 },
+        { name: "TypeScript", count: 62, share: 34.4 },
+        { name: "React", count: 58, share: 32.2 },
+        { name: "FastAPI", count: 44, share: 24.4 },
+        { name: "Machine Learning", count: 39, share: 21.7 },
+        { name: "Docker", count: 35, share: 19.4 },
+      ],
+      top_interests: [
+        { name: "AI", count: 74, share: 41.1 },
+        { name: "Product", count: 61, share: 33.9 },
+        { name: "Startups", count: 55, share: 30.6 },
+        { name: "Architecture", count: 42, share: 23.3 },
+        { name: "Mentorship", count: 38, share: 21.1 },
+      ],
+      top_roles: [
+        { name: "Frontend Developer", count: 30, share: 16.7 },
+        { name: "Backend Engineer", count: 30, share: 16.7 },
+        { name: "ML Engineer", count: 30, share: 16.7 },
+        { name: "Product Manager", count: 30, share: 16.7 },
+      ],
+      experience_buckets: [
+        { name: "0–1", count: 36, share: 20.0 },
+        { name: "2–4", count: 64, share: 35.6 },
+        { name: "5–7", count: 48, share: 26.7 },
+        { name: "8+", count: 32, share: 17.7 },
+      ],
+      booths: [
+        {
+          id: "booth-qazaq-it",
+          name: "Qazaq IT Community Hub",
+          category: "Community & Mentorship",
+          location: "Зал A · Стенд A1",
+          tags: ["python", "react", "typescript", "community"],
+          matching_participants: 142,
+        },
+        {
+          id: "booth-aiid-lab",
+          name: "AIID Smart Business & AI Lab",
+          category: "AI & Applied Research",
+          location: "Зал A · Стенд A2",
+          tags: ["artificial intelligence", "machine learning", "data science", "python"],
+          matching_participants: 118,
+        },
+        {
+          id: "booth-talent-arena",
+          name: "Tech Talent & Career Zone",
+          category: "Hiring & Career",
+          location: "Зал B · Стенд B1",
+          tags: ["frontend", "backend", "react", "typescript"],
+          matching_participants: 134,
+        },
+      ],
+    };
   },
   async getProfile() {
     await delay();

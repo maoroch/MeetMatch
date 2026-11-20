@@ -9,6 +9,7 @@ import { env, isDemoAuthMode } from "./lib/env";
 const Home = lazy(() => import("./pages/Home")),
   Onboarding = lazy(() => import("./pages/Onboarding")),
   Matches = lazy(() => import("./pages/Matches")),
+  Organizer = lazy(() => import("./pages/Organizer")),
   Login = lazy(() => import("./pages/Login")),
   Register = lazy(() => import("./pages/Register")),
   VerifyEmail = lazy(() => import("./pages/VerifyEmail")),
@@ -49,6 +50,7 @@ export default function App() {
         >
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/organizer" element={<Organizer />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/verify-email" element={<VerifyEmail />} />

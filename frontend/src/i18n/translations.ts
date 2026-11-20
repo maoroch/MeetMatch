@@ -5,6 +5,7 @@ const text = {
   "nav.signup": ["Регистрация", "Тіркелу", "Sign up"],
   "nav.logout": ["Выйти", "Шығу", "Log out"],
   "nav.dashboard": ["Мой кабинет", "Жеке кабинет", "Dashboard"],
+  "nav.organizer": ["Карта зала", "Зал картасы", "Hall Map"],
   "nav.menu": ["Меню", "Мәзір", "Menu"],
   "home.hero.title": [
     "Встречайте нужных людей. Создавайте будущее.",
@@ -590,6 +591,115 @@ const text = {
     "Изменить пароль",
     "Құпиясөзді өзгерту",
     "Change password",
+  ],
+  "matches.slots.label": [
+    "Свободные слоты 1:1 (нажмите для выбора)",
+    "Бос 1:1 уақыт слоттары (таңдау үшін басыңыз)",
+    "Free 1:1 slots (click to book)",
+  ],
+  "matches.slots.booked": [
+    "Встреча 1:1: {slot}",
+    "1:1 кездесу: {slot}",
+    "1:1 meeting: {slot}",
+  ],
+  "matches.slots.toast": [
+    "Слот {slot} с {name} выбран для встречи 1:1",
+    "{name} қатысушысымен {slot} уақытында 1:1 кездесу белгіленді",
+    "Booked 1:1 slot {slot} with {name}",
+  ],
+  "matches.slots.filterTitle": [
+    "Расписание встреч 1:1 по свободным слотам",
+    "Бос уақыт слоттары бойынша 1:1 кездесу кестесі",
+    "1:1 Meeting Schedule by Free Slots",
+  ],
+  "matches.slots.filterHint": [
+    "Отметьте удобные для вас слоты — совпадения подсветятся на карточках участников.",
+    "Өзіңізге ыңғайлы уақытты белгілеңіз — сәйкес слоттар қатысушы карточкаларында ерекшеленеді.",
+    "Select your free slots — matching times will be highlighted on participant cards.",
+  ],
+  "matches.booths.eyebrow": [
+    "СТЕНДЫ ПАРТНЁРОВ",
+    "СЕРІКТЕС СТЕНДТЕРІ",
+    "PARTNER BOOTHS",
+  ],
+  "matches.booths.title": [
+    "Рекомендованные стенды партнёров",
+    "Ұсынылған серіктес стендтері",
+    "Recommended Partner Booths",
+  ],
+  "matches.booths.subtitle": [
+    "Подобраны на основе ваших навыков, интересов и цели на мероприятии.",
+    "Сіздің дағдыларыңыз, қызығушылықтарыңыз бен мақсатыңыз негізінде таңдалды.",
+    "Matched to your skills, interests, and conference networking goal.",
+  ],
+  "organizer.eyebrow": [
+    "ДАШБОРД ОРГАНИЗАТОРА",
+    "ҰЙЫМДАСТЫРУШЫ ПАНЕЛІ",
+    "ORGANIZER DASHBOARD",
+  ],
+  "organizer.title": [
+    "Карта интересов и целей зала",
+    "Залдың қызығушылықтар мен мақсаттар картасы",
+    "Conference Hall Interests & Goals Map",
+  ],
+  "organizer.subtitle": [
+    "Агрегированная аналитика по участникам мероприятия, востребованным компетенциям и стендам партнёров.",
+    "Іс-шара қатысушылары, сұранысқа ие құзыреттер және серіктес стендтері бойынша жиынтық аналитика.",
+    "Live aggregated analytics across conference participants, top competencies, and partner booths.",
+  ],
+  "organizer.kpi.participants": [
+    "Участников в зале",
+    "Залдағы қатысушылар",
+    "Participants in hall",
+  ],
+  "organizer.kpi.clusters": [
+    "Активных тем и навыков",
+    "Белсенді тақырыптар мен дағдылар",
+    "Active skill & interest clusters",
+  ],
+  "organizer.kpi.feedback": [
+    "Отметок обратной связи",
+    "Кері байланыс белгілері",
+    "Feedback interactions",
+  ],
+  "organizer.kpi.booths": [
+    "Стендов партнёров",
+    "Серіктес стендтері",
+    "Partner booths",
+  ],
+  "organizer.goals.title": [
+    "Распределение целей нетворкинга",
+    "Нетворкинг мақсаттарының үлесі",
+    "Networking Goals Distribution",
+  ],
+  "organizer.experience.title": [
+    "Опыт участников зала",
+    "Қатысушылардың тәжірибе деңгейі",
+    "Participant Experience Distribution",
+  ],
+  "organizer.experience.years": ["лет", "жыл", "yrs"],
+  "organizer.skills.title": [
+    "Топ навыков и технологий в зале",
+    "Залдағы үздік дағдылар мен технологиялар",
+    "Top Skills & Technologies in Hall",
+  ],
+  "organizer.interests.title": [
+    "Карта интересов участников",
+    "Қатысушылардың қызығушылықтар картасы",
+    "Participant Interests Map",
+  ],
+  "organizer.booths.title": [
+    "Потенциал трафика стендов партнёров",
+    "Серіктес стендтерінің әлеуетті аудиториясы",
+    "Partner Booths Audience Reach",
+  ],
+  "organizer.table.booth": ["Стенд партнёра", "Серіктес стенді", "Partner Booth"],
+  "organizer.table.category": ["Направление", "Бағыты", "Category"],
+  "organizer.table.location": ["Локация", "Орналасуы", "Location"],
+  "organizer.table.demand": [
+    "Релевантных участников",
+    "Сәйкес қатысушылар",
+    "Matching Attendees",
   ],
 } as const satisfies Record<string, readonly [string, string, string]>;
 export type Key = keyof typeof text;

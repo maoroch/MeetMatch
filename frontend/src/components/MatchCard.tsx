@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Check, Copy, MessageCircle, ThumbsUp, X } from "lucide-react";
+import { CalendarClock, Check, Copy, MessageCircle, ThumbsUp, X } from "lucide-react";
 import type { FeedbackAction, Match, MatchCardStatus } from "../types";
 import { useI18n } from "../hooks/useI18n";
 import { useToast } from "./ui/Toast";
@@ -9,12 +9,18 @@ export function MatchCard({
   match,
   status = "idle",
   onFeedback,
+  preferredSlots = [],
+  scheduledSlot = "",
+  onScheduleSlot,
   variant = "live",
   index = 0,
 }: {
   match: Match;
   status?: MatchCardStatus;
   onFeedback?: (id: string, action: FeedbackAction) => Promise<void>;
+  preferredSlots?: string[];
+  scheduledSlot?: string;
+  onScheduleSlot?: (id: string, slot: string) => void;
   variant?: "live" | "sample";
   index?: number;
 }) {
@@ -67,6 +73,7 @@ export function MatchCard({
       toast(t("errors.request"));
     }
   }
+  const slots = match.available_slots ?? [];
   return (
     <article
       className={`card match-card ${status === "rejected" ? "rejected" : ""}`}
@@ -107,6 +114,41 @@ export function MatchCard({
           </Button>
         )}
       </div>
+      {variant === "live" && slots.length > 0 && (
+        <div className="slot-section">
+          <div className="slot-header">
+            <CalendarClock size={15} />
+            <span>{t("matches.slots.label")}</span>
+            {scheduledSlot && (
+              <span className="badge slot-booked-badge">
+                <Check size={13} /> {t("matches.slots.booked", { slot: scheduledSlot })}
+              </span>
+            )}
+          </div>
+          <div className="slot-pills">
+            {slots.map((slot) => {
+              const isBooked = scheduledSlot === slot;
+              const isMutual = preferredSlots.includes(slot);
+              return (
+                <button
+                  key={slot}
+                  type="button"
+                  className={`slot-pill ${isBooked ? "booked" : isMutual ? "mutual" : ""}`}
+                  aria-pressed={isBooked}
+                  onClick={() => {
+                    onScheduleSlot?.(match.id, slot);
+                    if (!isBooked) {
+                      toast(t("matches.slots.toast", { name: match.name, slot }));
+                    }
+                  }}
+                >
+                  {slot}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
       {variant === "live" && (
         <div className="feedback-actions">
           {status === "met" || status === "rejected" ? (
